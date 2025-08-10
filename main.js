@@ -25,7 +25,7 @@ class ColorGenerator {
 	}
 	
 	next() {
-		if (this.discarded.length) return this.discarded.shift();
+		if (this.discarded.length) return this.discarded.pop();
 		const h = this.h;
 		this.h += goldenAngle;
 		return `oklch(${L} ${C} ${h})`;
