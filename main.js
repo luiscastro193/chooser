@@ -93,6 +93,8 @@ function setMyTimeout() {
 }
 
 function setFinger(event) {
+	event.preventDefault();
+	
 	if (!resolved) {
 		type.disabled = true;
 		
@@ -138,7 +140,6 @@ canvas.addEventListener('pointerdown', setFinger);
 canvas.addEventListener('pointermove', updateFinger);
 canvas.addEventListener('pointerup', deleteFinger);
 canvas.addEventListener('pointercancel', deleteFinger);
-canvas.addEventListener('pointerleave', deleteFinger);
 
 function draw() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
