@@ -51,7 +51,7 @@ function resizeCanvas() {
 }
 
 addEventListener("resize", resizeCanvas);
-resizeCanvas();
+requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
 
 function shuffle(array) {
 	for (let i = array.length - 1; i > 0; i--) {
@@ -93,8 +93,6 @@ function setMyTimeout() {
 }
 
 function setFinger(event) {
-	event.preventDefault();
-	
 	if (!resolved) {
 		type.disabled = true;
 		
