@@ -135,7 +135,6 @@ function resizeCanvas() {
 	({width, height} = canvas.getBoundingClientRect());
 	canvas.width = Math.ceil(width * devicePixelRatio);
 	canvas.height = Math.ceil(height * devicePixelRatio);
-	ctx.resetTransform();
 	ctx.scale(canvas.width / width, canvas.height / height);
 }
 
