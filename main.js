@@ -94,6 +94,7 @@ function setMyTimeout() {
 
 function setFinger(event) {
 	if (!resolved) {
+		canvas.setPointerCapture(event.pointerId);
 		type.disabled = true;
 		
 		fingers.set(event.pointerId, {
