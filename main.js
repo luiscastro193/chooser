@@ -42,17 +42,6 @@ type.onclick = () => {
 
 let colorGenerator = new ColorGenerator();
 
-function resizeCanvas() {
-	const size = canvas.getBoundingClientRect();
-	canvas.width = Math.ceil(size.width * devicePixelRatio);
-	canvas.height = Math.ceil(size.height * devicePixelRatio);
-	ctx.resetTransform();
-	ctx.scale(canvas.width / size.width, canvas.height / size.height);
-}
-
-addEventListener("resize", resizeCanvas);
-requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
-
 function shuffle(array) {
 	for (let i = array.length - 1; i > 0; i--) {
 		let j = Math.trunc(Math.random() * (i + 1));
@@ -140,8 +129,21 @@ canvas.addEventListener('pointermove', updateFinger);
 canvas.addEventListener('pointerup', deleteFinger);
 canvas.addEventListener('pointercancel', deleteFinger);
 
+let width, height;
+
+function resizeCanvas() {
+	({width, height} = canvas.getBoundingClientRect());
+	canvas.width = Math.ceil(width * devicePixelRatio);
+	canvas.height = Math.ceil(height * devicePixelRatio);
+	ctx.resetTransform();
+	ctx.scale(canvas.width / width, canvas.height / height);
+}
+
+addEventListener("resize", resizeCanvas);
+requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
+
 function draw() {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.clearRect(0, 0, width, height);
 	
 	for (const finger of fingers.values()) {
 		ctx.beginPath();
@@ -151,7 +153,7 @@ function draw() {
 		
 		if (finger.isWinner) {
 			ctx.beginPath();
-			ctx.rect(0, 0, canvas.width, canvas.height);
+			ctx.rect(0, 0, width, height);
 			ctx.arc(finger.x, finger.y, radius + padding, 0, PI2);
 			ctx.fill('evenodd');
 		}
