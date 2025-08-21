@@ -55,7 +55,7 @@ function resolve() {
 	resolved = true;
 	let ids = [...fingers.keys()];
 	
-	if (type.textContent == "Finger") {
+	if (type.textContent == 'Finger') {
 		const winnerId = ids[Math.trunc(Math.random() * ids.length)];
 		const winner = fingers.get(winnerId);
 		winner.isWinner = true;
@@ -89,7 +89,7 @@ function setFinger(event) {
 		fingers.set(event.pointerId, {
 			x: event.offsetX,
 			y: event.offsetY,
-			color: type.textContent == "Finger" ? colorGenerator.next() : white
+			color: type.textContent == 'Finger' ? colorGenerator.next() : white
 		});
 		
 		setMyTimeout();
@@ -131,15 +131,15 @@ canvas.addEventListener('pointercancel', deleteFinger);
 
 let width, height;
 
-function resizeCanvas() {
-	({width, height} = canvas.getBoundingClientRect());
-	canvas.width = Math.ceil(width * devicePixelRatio);
-	canvas.height = Math.ceil(height * devicePixelRatio);
+function resizeCanvas([resizeEntry]) {
+	width = resizeEntry.contentBoxSize[0].inlineSize;
+	height = resizeEntry.contentBoxSize[0].blockSize;
+	canvas.width = resizeEntry.devicePixelContentBoxSize?.[0].inlineSize || Math.ceil(width * devicePixelRatio);
+	canvas.height = resizeEntry.devicePixelContentBoxSize?.[0].blockSize || Math.ceil(height * devicePixelRatio);
 	ctx.scale(canvas.width / width, canvas.height / height);
 }
 
-addEventListener("resize", resizeCanvas);
-requestAnimationFrame(() => requestAnimationFrame(resizeCanvas));
+new ResizeObserver(resizeCanvas).observe(canvas);
 
 function draw() {
 	ctx.clearRect(0, 0, width, height);
