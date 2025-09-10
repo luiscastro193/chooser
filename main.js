@@ -3,6 +3,7 @@ const PI2 = Math.PI * 2;
 const radius = 60;
 const padding = 40;
 const goldenAngle = 180 * (3 - Math.sqrt(5));
+const styles = document.getElementById('styles');
 const type = document.querySelector('button');
 const canvas = document.querySelector('canvas');
 const ctx = canvas.getContext('2d');
@@ -139,8 +140,6 @@ function resizeCanvas([resizeEntry]) {
 	ctx.scale(canvas.width / width, canvas.height / height);
 }
 
-new ResizeObserver(resizeCanvas).observe(canvas);
-
 function draw() {
 	ctx.clearRect(0, 0, width, height);
 	
@@ -161,5 +160,12 @@ function draw() {
 	requestAnimationFrame(draw);
 }
 
-requestAnimationFrame(draw);
+while (!styles.sheet.cssRules.length)
+	await new Promise(resolve => requestAnimationFrame(resolve));
+
+requestAnimationFrame(() => {
+	new ResizeObserver(resizeCanvas).observe(canvas);
+	requestAnimationFrame(draw);
+});
+
 type.textContent = 'Finger';
