@@ -10,7 +10,7 @@ const ctx = canvas.getContext('2d');
 const fingers = new Map();
 let resolved = false;
 
-const L = .8;
+const L = .75;
 const C = .5;
 const white = `rgba(255, 255, 255, ${L})`;
 let oklchColor = h => `oklch(${L} ${C} ${h})`;
