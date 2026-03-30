@@ -11,12 +11,27 @@ const fingers = new Map();
 let resolved = false;
 
 const L = .8;
-const C = .3;
+const C = .5;
 const white = `rgba(255, 255, 255, ${L})`;
+let oklchColor = h => `oklch(${L} ${C} ${h})`;
+
+import('https://colorjs.io/dist/color.min.js').then(module => {
+	const gamut = matchMedia('(color-gamut: rec2020)').matches ? 'rec2020'
+		: matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
+	oklchColor = h => new module.default('oklch', [L, C, h]).to(gamut).toString();
+	
+	function recolor(color) {
+		const h = color.match(/oklch\(.+ (.+)\)/)?.[1];
+		return h ? oklchColor(h) : color;
+	}
+	
+	colorGenerator.discarded = colorGenerator.discarded.map(recolor);
+	for (const finger of fingers.values()) finger.color = recolor(finger.color);
+});
 
 function oppositeColors() {
 	let h = Math.random() * 360;
-	return [`oklch(${L} ${C} ${h})`, `oklch(${L} ${C} ${h + 180})`];
+	return [oklchColor(h), oklchColor(h + 180)];
 }
 
 class ColorGenerator {
@@ -29,7 +44,7 @@ class ColorGenerator {
 		if (this.discarded.length) return this.discarded.pop();
 		const h = this.h;
 		this.h += goldenAngle;
-		return `oklch(${L} ${C} ${h})`;
+		return oklchColor(h);
 	}
 	
 	discard(color) {
