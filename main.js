@@ -5,8 +5,9 @@ const padding = 40;
 const goldenAngle = 180 * (3 - Math.sqrt(5));
 const styles = document.getElementById('styles');
 const type = document.querySelector('button');
+const gamut = matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
 const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d', {colorSpace: gamut == 'p3' ? 'display-p3' : 'srgb', desynchronized: true});
 const fingers = new Map();
 let resolved = false;
 
@@ -14,9 +15,6 @@ const white = "rgba(255, 255, 255, .9)";
 let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
-	const gamut = matchMedia('(color-gamut: rec2020)').matches ? 'rec2020'
-		: matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
-	
 	oklchColor = h => {
 		let best;
 		
