@@ -16,14 +16,18 @@ let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
 	oklchColor = h => {
-		let best;
-		
-		for (let L = .4; L < 1; L += .01) {
-			const color = new module.default('oklch', [L, .5, h]).toGamut({space: gamut, method: 'oklch.c'});
-			if (!best || color.c >= best.c) best = color;
+		const chroma = L => new module.default('oklch', [L, .5, h]).toGamut({space: gamut, method: 'oklch.c'}).c;
+		let lo = .4, hi = 1;
+
+		while (hi - lo > .001) {
+			const third = (hi - lo) / 3;
+			const m1 = lo + third;
+			const m2 = hi - third;
+			if (chroma(m1) < chroma(m2)) lo = m1;
+			else hi = m2;
 		}
-		
-		return best.toString({inGamut: false});
+
+		return new module.default('oklch', [(lo + hi) / 2, .5, h]).toGamut({space: gamut, method: 'oklch.c'}).toString({inGamut: false});
 	}
 	
 	function recolor(color) {
