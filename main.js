@@ -7,7 +7,7 @@ const styles = document.getElementById('styles');
 const type = document.querySelector('button');
 const gamut = matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
 const canvas = document.querySelector('canvas');
-const ctx = canvas.getContext('2d', {colorSpace: gamut == 'p3' ? 'display-p3' : 'srgb', desynchronized: true});
+const ctx = canvas.getContext('2d', {colorSpace: gamut == 'p3' ? 'display-p3' : 'srgb'});
 const fingers = new Map();
 let resolved = false;
 
