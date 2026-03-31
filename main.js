@@ -23,7 +23,7 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 			const third = (hi - lo) / 3;
 			const m1 = lo + third;
 			const m2 = hi - third;
-			if (chroma(m1) < chroma(m2)) lo = m1;
+			if (chroma(m1) <= chroma(m2)) lo = m1;
 			else hi = m2;
 		}
 
