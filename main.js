@@ -16,7 +16,7 @@ let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
 	oklchColor = h => {
-		const color = L => new module.default('oklch', [L, .5, h]).toGamut({space: gamut, method: 'oklch.c'});
+		const color = L => new module.default('oklch', [L, .4, h]).toGamut({space: gamut, method: 'oklch.c'});
 		let lo = .4, hi = 1;
 
 		while (hi - lo > .001) {
