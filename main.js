@@ -10,7 +10,7 @@ const ctx = canvas.getContext('2d');
 const fingers = new Map();
 let resolved = false;
 
-const white = "rgba(255, 255, 255, .8)";
+const white = "rgba(255, 255, 255, .9)";
 let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
