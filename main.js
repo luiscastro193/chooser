@@ -16,7 +16,7 @@ let oklchColor = h => `oklch(.8 .3 ${h})`;
 import('https://colorjs.io/dist/color.min.js').then(module => {
 	const gamut = matchMedia('(color-gamut: rec2020)').matches ? 'rec2020'
 		: matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
-	
+	document.title = gamut; // TODO: remove temp test
 	oklchColor = h => {
 		let best;
 		
