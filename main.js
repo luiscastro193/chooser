@@ -10,15 +10,23 @@ const ctx = canvas.getContext('2d');
 const fingers = new Map();
 let resolved = false;
 
-const L = .75;
-const C = .5;
-const white = `rgba(255, 255, 255, ${L})`;
-let oklchColor = h => `oklch(${L} ${C} ${h})`;
+const white = "rgba(255, 255, 255, .8)";
+let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
 	const gamut = matchMedia('(color-gamut: rec2020)').matches ? 'rec2020'
 		: matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
-	oklchColor = h => new module.default('oklch', [L, C, h]).to(gamut).toString();
+	
+	oklchColor = h => {
+		let best;
+		
+		for (let L = .4; L < 1; L += .01) {
+			const color = new module.default('oklch', [L, .5, h]).toGamut({space: gamut, method: 'oklch.c'});
+			if (!best || color.c >= best.c) best = color;
+		}
+		
+		return best.toString({inGamut: false});
+	}
 	
 	function recolor(color) {
 		const h = color.match(/oklch\(.+ (.+)\)/)?.[1];
