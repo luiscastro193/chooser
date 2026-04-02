@@ -15,8 +15,27 @@ const white = "rgba(255, 255, 255, .9)";
 let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
+	function optimizeC(color) {
+		if (color.inGamut(gamut)) return color;
+		let lo = 0, hi = color.c;
+		
+		while (hi - lo > .0001) {
+			const candidate = color.clone();
+			candidate.c = (lo + hi) / 2;
+			
+			if (candidate.inGamut(gamut)) {
+				color.c = candidate.c;
+				lo = candidate.c;
+			}
+			else
+				hi = candidate.c;
+		}
+		
+		return color;
+	}
+	
 	oklchColor = h => {
-		const color = L => new module.default('oklch', [L, .4, h]).toGamut({space: gamut, method: 'raytrace'});
+		const color = L => optimizeC(new module.default('oklch', [L, .4, h]));
 		let lo = .4, hi = 1;
 
 		while (hi - lo > .001) {
