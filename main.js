@@ -20,7 +20,7 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 	oklchColor = h => {
 		let lo = .4, hi = 1;
 
-		while (hi - lo > .001) {
+		while (hi - lo > .0001) {
 			const third = (hi - lo) / 3;
 			const m1 = lo + third;
 			const m2 = hi - third;
