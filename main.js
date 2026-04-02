@@ -15,9 +15,9 @@ const white = "rgba(255, 255, 255, .9)";
 let oklchColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
-	function optimizeC(color) {
-		if (color.inGamut(gamut)) return color;
-		let lo = 0, hi = color.c;
+	function bestColor(L, h) {
+		let color = new module.default('oklch', [L, 0, h]);
+		let lo = 0, hi = .4;
 		
 		while (hi - lo > .0001) {
 			const candidate = color.clone();
@@ -35,18 +35,17 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 	}
 	
 	oklchColor = h => {
-		const color = L => optimizeC(new module.default('oklch', [L, .4, h]));
 		let lo = .4, hi = 1;
 
 		while (hi - lo > .001) {
 			const third = (hi - lo) / 3;
 			const m1 = lo + third;
 			const m2 = hi - third;
-			if (color(m1).c <= color(m2).c) lo = m1;
+			if (bestColor(m1, h).c <= bestColor(m2, h).c) lo = m1;
 			else hi = m2;
 		}
 
-		return color((lo + hi) / 2).toString({inGamut: false});
+		return bestColor((lo + hi) / 2, h).toString({inGamut: false});
 	}
 	
 	function recolor(color) {
