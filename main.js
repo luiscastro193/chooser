@@ -18,7 +18,7 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 	const bestColor = (L, h) => new module.default('oklch', [L, .4, h]).toGamut({space: gamut, method: 'raytrace'});
 	
 	oklchColor = h => {
-		let lo = .45, hi = 1;
+		let lo = .4, hi = 1;
 
 		while (hi - lo > .0001) {
 			const third = (hi - lo) / 3;
