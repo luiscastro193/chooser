@@ -12,15 +12,32 @@ const fingers = new Map();
 let resolved = false;
 
 const white = "rgba(255, 255, 255, .9)";
-let oklchColor = h => `oklch(.8 .3 ${h})`;
+let getColor = h => `oklch(.8 .3 ${h})`;
 
 import('https://colorjs.io/dist/color.min.js').then(module => {
-	const bestColor = (L, h) => new module.default('oklch', [L, .4, h]).toGamut({space: gamut, method: 'raytrace'});
+	function bestColor(t, h) {
+		let color = new module.default('hct', [h, 0, t]);
+		let lo = 50, hi = 145;
+		
+		while (hi - lo > .01) {
+			const candidate = color.clone();
+			candidate.c = (lo + hi) / 2;
+			
+			if (candidate.inGamut(gamut)) {
+				color.c = candidate.c;
+				lo = candidate.c;
+			}
+			else
+				hi = candidate.c;
+		}
+		
+		return color;
+	}
 	
-	oklchColor = h => {
-		let lo = .4, hi = 1;
+	getColor = h => {
+		let lo = 30, hi = 100;
 
-		while (hi - lo > .0001) {
+		while (hi - lo > .1) {
 			const third = (hi - lo) / 3;
 			const m1 = lo + third;
 			const m2 = hi - third;
@@ -28,12 +45,12 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 			else hi = m2;
 		}
 
-		return bestColor((lo + hi) / 2, h).toString({inGamut: false});
+		return bestColor((lo + hi) / 2, h).to(gamut).toString({inGamut: false});
 	}
 	
 	function recolor(color) {
 		const h = color.match(/oklch\(.+ (.+)\)/)?.[1];
-		return h ? oklchColor(h) : color;
+		return h ? getColor(h) : color;
 	}
 	
 	colorGenerator.discarded = colorGenerator.discarded.map(recolor);
@@ -42,7 +59,7 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 
 function oppositeColors() {
 	let h = Math.random() * 360;
-	return [oklchColor(h), oklchColor(h + 180)];
+	return [getColor(h), getColor(h + 180)];
 }
 
 class ColorGenerator {
@@ -55,7 +72,7 @@ class ColorGenerator {
 		if (this.discarded.length) return this.discarded.pop();
 		const h = this.h;
 		this.h += goldenAngle;
-		return oklchColor(h);
+		return getColor(h);
 	}
 	
 	discard(color) {
