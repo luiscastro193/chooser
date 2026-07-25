@@ -14,7 +14,7 @@ let resolved = false;
 const white = "rgba(255, 255, 255, .9)";
 let oklchColor = h => `oklch(.8 .3 ${h})`;
 
-import('https://colorjs.io/dist/color.min.js').then(module => {
+import('https://cdn.jsdelivr.net/npm/colorjs.io/+esm').then(module => {
 	const bestColor = (L, h) => new module.default('oklch', [L, .4, h]).toGamut({space: gamut, method: 'raytrace'});
 	
 	oklchColor = h => {
@@ -28,7 +28,7 @@ import('https://colorjs.io/dist/color.min.js').then(module => {
 			else hi = m2;
 		}
 
-		return bestColor((lo + hi) / 2, h).toString({inGamut: false});
+		return bestColor((lo + hi) / 2, h).toString();
 	}
 	
 	function recolor(color) {
