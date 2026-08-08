@@ -1,7 +1,10 @@
 "use strict";
+const resolveDuration = 2500;
 const PI2 = Math.PI * 2;
 const radius = 60;
 const padding = 40;
+const arcRadius = 5;
+const arcPadding = 5;
 const goldenAngle = 180 * (3 - Math.sqrt(5));
 const styles = document.getElementById('styles');
 const type = document.querySelector('button');
@@ -10,6 +13,7 @@ const gamut = matchMedia('(color-gamut: p3)').matches ? 'p3' : 'srgb';
 const ctx = canvas.getContext('2d', {colorSpace: gamut == 'p3' ? 'display-p3' : 'srgb'});
 const fingers = new Map();
 let resolved = false;
+let timeoutEnd = NaN;
 
 const white = "rgba(255, 255, 255, .9)";
 let oklchColor = h => `oklch(.8 .3 ${h})`;
@@ -78,8 +82,9 @@ function shuffle(array) {
 	return array;
 }
 
-function resolve() {
+function resolveFingers() {
 	resolved = true;
+	timeoutEnd = NaN;
 	let ids = [...fingers.keys()];
 	
 	if (type.textContent == 'Finger') {
@@ -103,9 +108,12 @@ let timeout;
 
 function setMyTimeout() {
 	clearTimeout(timeout);
+	timeoutEnd = NaN;
 	
-	if (!resolved && fingers.size >= 2)
-		timeout = setTimeout(resolve, 2500);
+	if (!resolved && fingers.size >= 2) {
+		timeout = setTimeout(resolveFingers, resolveDuration);
+		timeoutEnd = Date.now() + resolveDuration;
+	}
 }
 
 function setFinger(event) {
@@ -166,7 +174,10 @@ function resizeCanvas([resizeEntry]) {
 	ctx.scale(canvas.width / width, canvas.height / height);
 }
 
+const angleStart = -Math.PI / 2;
+
 function draw() {
+	const progress = resolved ? 1 : 1 - (timeoutEnd - Date.now()) / resolveDuration;
 	ctx.clearRect(0, 0, width, height);
 	
 	for (const finger of fingers.values()) {
@@ -174,6 +185,14 @@ function draw() {
 		ctx.arc(finger.x, finger.y, radius, 0, PI2);
 		ctx.fillStyle = finger.color;
 		ctx.fill();
+		
+		if (progress) {
+			ctx.beginPath();
+			ctx.arc(finger.x, finger.y, radius + arcPadding + arcRadius / 2, angleStart, angleStart + progress * PI2);
+			ctx.lineWidth = arcRadius;
+			ctx.strokeStyle = finger.color;
+			ctx.stroke();
+		}
 		
 		if (finger.isWinner) {
 			ctx.beginPath();
