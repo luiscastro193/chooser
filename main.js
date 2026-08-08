@@ -178,6 +178,7 @@ const angleStart = -Math.PI / 2;
 
 function draw() {
 	const progress = resolved ? 1 : 1 - (timeoutEnd - Date.now()) / resolveDuration;
+	const angleEnd = angleStart + progress * PI2;
 	ctx.clearRect(0, 0, width, height);
 	
 	for (const finger of fingers.values()) {
@@ -186,9 +187,9 @@ function draw() {
 		ctx.fillStyle = finger.color;
 		ctx.fill();
 		
-		if (progress) {
+		if (angleEnd) {
 			ctx.beginPath();
-			ctx.arc(finger.x, finger.y, radius + arcPadding + arcRadius / 2, angleStart, angleStart + progress * PI2);
+			ctx.arc(finger.x, finger.y, radius + arcPadding + arcRadius / 2, angleStart, angleEnd);
 			ctx.lineWidth = arcRadius;
 			ctx.strokeStyle = finger.color;
 			ctx.stroke();
