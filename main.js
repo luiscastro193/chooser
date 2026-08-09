@@ -175,6 +175,7 @@ function resizeCanvas([resizeEntry]) {
 }
 
 const angleStart = -Math.PI / 2;
+const arcOffset = radius + arcPadding + arcRadius / 2;
 
 function draw() {
 	const progress = resolved ? 1 : 1 - (timeoutEnd - Date.now()) / resolveDuration;
@@ -189,7 +190,7 @@ function draw() {
 		
 		if (angleEnd) {
 			ctx.beginPath();
-			ctx.arc(finger.x, finger.y, radius + arcPadding + arcRadius / 2, angleStart, angleEnd);
+			ctx.arc(finger.x, finger.y, arcOffset, angleStart, angleEnd);
 			ctx.lineWidth = arcRadius;
 			ctx.strokeStyle = finger.color;
 			ctx.stroke();
